@@ -6,7 +6,7 @@ import com.color.catalog.*;
 
 public class EmotionBank {
 	
-		private Emotion[] PAD = { // +P +A + D, 
+		private Emotion[] bank = { // +P +A + D, 
 			new Emotion("Bold", 440, 610, 660),
 			new Emotion("Mighty", 480, 510, 690),
 			new Emotion("Kind", 730, 190, 570),
@@ -45,8 +45,6 @@ public class EmotionBank {
 			new Emotion("Entertained", 770, 440, 420),
 			new Emotion("Serious", 270, 240, 420),
 			new Emotion("Cooperative", 390, 130, 30),
-	};
-		private Emotion[] nPAD = { // -P +A +D
 			new Emotion("Dissatisfied", -500, 50, 130),
 			new Emotion("Disgusted", -600, 350, 110),
 			new Emotion("Insolent", -260, 210, 200),
@@ -65,8 +63,6 @@ public class EmotionBank {
 			new Emotion("Cold Anger", -430, 670, 340),
 			new Emotion("Hostile but Controlled", -240, 420, 90),
 			new Emotion("Dissatisfied", -500, 50, 130),
-	};
-		private Emotion[] PnAD = { // +P -A +D
 			new Emotion("Relaxed", 680, -460, 60),
 			new Emotion("Untroubled", 790, -10, 330),
 			new Emotion("Modest", 270, -60, 120),
@@ -75,8 +71,6 @@ public class EmotionBank {
 			new Emotion("Aloof", 160, -10, 250),
 			new Emotion("Leisurely", 580, -320, 110),
 			new Emotion("Reserved", 10, -190, 20),
-	};
-		private Emotion[] PAnD = {// +P +A -D
 			new Emotion("Thankful", 610, 100, -130),
 			new Emotion("Respectful", 380, 130, -80),
 			new Emotion("Appreciative", 550, 70, -140),
@@ -93,11 +87,7 @@ public class EmotionBank {
 			new Emotion("Overwhelmed", 140, 450, -240),
 			new Emotion("Curious", 220, 620, -10),
 			new Emotion("Astonished", 160, 880, -150),
-	};
-		private Emotion[] nPnAD = {// -P -A +D
 			new Emotion("Disdainful", -320, -110, 50),
-				};
-		private Emotion[] nPAnD = {// -P +A -D
 			new Emotion("Frustrated", -690, 30, -600),
 			new Emotion("Distressed", -610, 280, -360),
 			new Emotion("Insecure", -570, 140, -420),
@@ -125,8 +115,6 @@ public class EmotionBank {
 			new Emotion("Confused", -530, 280, -30),
 			new Emotion("Regretful", -520, 20, -210),
 			new Emotion("Tense", -330, 580, -110),
-	};
-		private Emotion[] PnAnD = { // +P -A -D
 			new Emotion("Protected", 600, -220, -420),
 			new Emotion("Consoled", 290, -190, -280),
 			new Emotion("Quiet", 190, -400, -40),
@@ -134,8 +122,6 @@ public class EmotionBank {
 			new Emotion("Humble", 230, -280, -270),
 			new Emotion("Solemn", 30, -320, -110),
 			new Emotion("Reverent", 310, -80, -290),
-	};
-		private Emotion[] nPnAnD = {// -P -A -D
 			new Emotion("Depressed", -720, -290, -410),
 			new Emotion("Despairing", -720, -160, -380),
 			new Emotion("Lonely", -660, -430, -320),
@@ -162,7 +148,7 @@ public class EmotionBank {
 			new Emotion("Discouraged", -610, -150, -290),
 			new Emotion("Sad", -630, -270, -330),
 	};
-
+	
 	public EmotionBank(){
 		
 	}
@@ -172,26 +158,25 @@ public class EmotionBank {
 	 *@param aValue: the arousal value for the emotion being matched.
 	 *@param dValue: the dominance value for the emotion being matched.
 	 */
-	public Emotion[] FindMatch(int pValue, int aValue, int dValue){
-		EmoStringTuple bestMatch = new EmoStringTuple(new Emotion("Error", 0, 0, 0), 0); // default value to catch errors
-		//placeholder
-		Emotion[] placeholder = {new Emotion("blank", 0, 0, 0)};
-		return placeholder;
-	}
-	
-	public EmoStringTuple scanCategory (String category, int currentBest){
+	public String FindMatch(int pValue, int aValue, int dValue){
+		EmoStringTuple bestMatch = new EmoStringTuple(new Emotion("Error", 0, 0, 0), Integer.MAX_VALUE); // default value to catch errors
 		
-		
-		if (category.equals("PAD"){
-			// perform analysis on PAD
-			for (int i = 0; i < PAD.length; i++){
-				Emotion cur = PAD[i];
-				int pDistance = 
+		for (int i = 0; i < bank.length; i++){
+			Emotion cur = bank[i];
+			int pDistance = getDistance(pValue, cur.getPleasure());
+			int aDistance = getDistance(aValue, cur.getArousal());
+			int dDistance = getDistance(dValue, cur.getDominance());
+			int currentCumDistance = pDistance + aDistance + dDistance;
+			
+			if (bestMatch.getCumDistance() > currentCumDistance) {
+				bestMatch = new EmoStringTuple(cur, currentCumDistance);
 			}
 		}
+		return bestMatch.getName();
 	}
 	
-	int getDistance(int first, int second){
+	
+	private int getDistance(int first, int second){
 		if (first>=0 && second>=0){
 			// both positive
 			return Math.abs(first-second);
@@ -212,7 +197,7 @@ public class EmotionBank {
 	
 	public static void main(String args[]){
 		EmotionBank howdy = new EmotionBank();
-		int lulz = howdy.getDistance(0, 0);
+		String lulz = howdy.FindMatch(-22, -272, 600);
 		System.out.print(lulz);
 	}
 }
